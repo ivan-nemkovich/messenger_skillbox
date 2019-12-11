@@ -8,7 +8,6 @@ class ServerProtocol(LineOnlyReceiver):
     login: str = None
 
     def connectionMade(self):
-        # Потенциальный баг для внимательных =)
         self.factory.clients.append(self)
 
     def connectionLost(self, reason=connectionDone):
@@ -43,6 +42,7 @@ class ServerProtocol(LineOnlyReceiver):
                     self.transport.loseConnection()
             else:
                 self.sendLine("Invalid login".encode())
+
     # Send history function
     def send_history(self):
         for msg in self.factory.history:
