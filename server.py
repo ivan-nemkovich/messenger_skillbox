@@ -26,8 +26,13 @@ class ServerProtocol(LineOnlyReceiver):
         else:
             # login:admin -> admin
             if content.startswith("login:"):
-                self.login = content.replace("login:", "")
-                self.sendLine("Welcome!".encode())
+                # self.login = content.replace("login:", "")
+                if content.replace("login:", "") not in self.factory.logins:
+                    self.login = content.replace("login:", "")
+                    self.factory.logins.append(self.login)
+                    self.sendLine("Welcome!".encode())
+                else:
+                    self.sendLine("Try another login!".encode())
             else:
                 self.sendLine("Invalid login".encode())
 
@@ -35,9 +40,11 @@ class ServerProtocol(LineOnlyReceiver):
 class Server(ServerFactory):
     protocol = ServerProtocol
     clients: list
+    logins: list
 
     def startFactory(self):
         self.clients = []
+        self.logins = []
         print("Server started")
 
     def stopFactory(self):
