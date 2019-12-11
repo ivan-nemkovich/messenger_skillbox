@@ -13,6 +13,7 @@ class ServerProtocol(LineOnlyReceiver):
 
     def connectionLost(self, reason=connectionDone):
         self.factory.clients.remove(self)
+        self.factory.logins.remove(self.login)
 
     def lineReceived(self, line: bytes):
         content = line.decode()
@@ -32,7 +33,8 @@ class ServerProtocol(LineOnlyReceiver):
                     self.factory.logins.append(self.login)
                     self.sendLine("Welcome!".encode())
                 else:
-                    self.sendLine("Try another login!".encode())
+                    self.sendLine("Try another login!\nBye :)".encode())
+                    self.transport.loseConnection()
             else:
                 self.sendLine("Invalid login".encode())
 
